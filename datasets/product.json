@@ -1,0 +1,37 @@
+[
+  {
+    "product_name": "Nykaa Naturals Skin Secrets Exotic Indulgence Sheet Mask",
+    "price": "₹80",
+    "rating": "4.5",
+    "description": "A revitalizing sheet mask designed to nourish and hydrate your skin. Packed with natural ingredients, it provides an instant glow and is perfect for a quick skin pampering session.",
+    "link": "https://www.nykaa.com/nykaa-skin-secrets-sheet-mask/p/418274?productId=418274&pps=1&skuId=787806"
+  },
+  {
+    "product_name": "The Ordinary AHA 30% + BHA 2% Peeling Solution",
+    "price": "₹900",
+    "rating": "4.7",
+    "description": "A professional-grade peeling solution that targets blemishes and uneven skin tone. With a potent combination of AHA and BHA, it exfoliates deeply to reveal radiant, smooth skin.",
+    "link": "https://www.nykaa.com/the-ordinary-aha-30percent-bha-2percent-peeling-solution/p/12225204?productId=12225204&pps=1&skuId=5003149"
+  },
+  {
+    "product_name": "Nykaa Clay It Cool Perfect Glow Clay Mask with Kojic Acid",
+    "price": "₹599",
+    "rating": "4.5",
+    "description": "A clay mask enriched with kojic acid to brighten and rejuvenate the skin. It helps to reduce dark spots and leaves your face with a flawless, radiant glow.",
+    "link": "https://www.nykaa.com/nykaa-clay-it-cool-clay-mask/p/631839?productId=631839&pps=1&skuId=631832"
+  },
+  {
+    "product_name": "Pilgrim 25% AHA 2% BHA 5% PHA Face Peeling Solution",
+    "price": "₹581",
+    "rating": "4.3",
+    "description": "An advanced chemical exfoliant featuring a powerful mix of AHA, BHA, and PHA. Ideal for acne-prone and dull skin, it promotes cell turnover for a smoother, brighter complexion.",
+    "link": "https://www.nykaa.com/pilgrim-aha-bha-pha-face-peeling-solution/p/3664229?productId=3664229&pps=1"
+  },
+  {
+    "product_name": "Dot & Key Anti-Acne Salicylic Green Clay Face Mask",
+    "price": "₹495",
+    "rating": "4.6",
+    "description": "A detoxifying clay mask infused with salicylic acid to combat acne and unclog pores. Its soothing formula helps reduce redness and prevents breakouts, giving you clear, healthy skin.",
+    "link": "https://www.nykaa.com/dot-key-pollution-acne-defense-green-clay-mask/p/552262?productId=552262&pps=1"
+  }
+]
