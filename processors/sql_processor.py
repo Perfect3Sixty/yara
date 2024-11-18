@@ -13,21 +13,34 @@ class SQLQueryProcessor:
         
         # Define the table schema for context
         self.table_context = """
-        The 'products' table contains beauty products with the following columns:
+        The 'products' table contains beauty products with the following columns ONLY:
         - id: Integer (primary key)
-        - product_name: String (name of the product)
+        - product_name: String (name of the product, includes brand name)
         - price: String (price with currency symbol)
         - price_value: Float (numerical price value)
         - rating: Float (product rating)
         - description: Text (product description)
         - link: String (product URL)
         
-        Return only the raw SQL query without any markdown formatting, prefixes, or explanations.
+        Important notes:
+        - To search for brands or specific products, use ILIKE with the product_name or description columns
+        - Do not reference non-existent columns like 'brand' or 'category'
+        - Always use ILIKE with %% for partial matches
+        - Return only the raw SQL query without any formatting or explanation
+        
+        Example:
+        To search for Mamaearth products:
+        SELECT product_name, price, description FROM products 
+        WHERE product_name ILIKE '%Mamaearth%' OR description ILIKE '%Mamaearth%'
+        ORDER BY rating DESC LIMIT 5;
         """
     
     def clean_sql_query(self, sql_query: str) -> str:
         """Clean the SQL query by removing markdown formatting, prefixes, and extra whitespace."""
+        # Remove markdown code blocks
         sql_query = sql_query.replace('```sql', '').replace('```', '')
+        
+        # Remove common prefixes
         prefixes_to_remove = [
             "SQLQuery:", 
             "SQL:", 
@@ -55,7 +68,6 @@ class SQLQueryProcessor:
             # Clean the SQL query
             sql_query = self.clean_sql_query(sql_query)
             
-            # TODO will be removed
             print(f"Cleaned SQL: {sql_query}")  # Debug logging
             
             # Execute query and get results
