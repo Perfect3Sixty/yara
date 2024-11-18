@@ -33,8 +33,13 @@ flowchart TD
 
 ## Development
 
-```
+```bash
 python -m venv .venv
+
+source .venv/Scripts/activate 
+# or
+source .venv/bin/activate
+
 pip install -r requirements.txt
 
 uvicorn main:app --reload --port 7600

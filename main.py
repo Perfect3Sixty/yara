@@ -3,15 +3,36 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 import uvicorn
 
-from services.postgres import get_db
+from services.postgres import get_db, engine
 from services.qdrant import get_qdrant_client
 from api.router import api_router
 from core.config import SERVER_PORT
+from models.product import Base
+from utils.data_loader import load_products
 
 app = FastAPI()
 
 # Include the API router
-app.include_router(api_router) 
+app.include_router(api_router)
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database and load data on startup"""
+    try:
+        # Create database tables
+        Base.metadata.create_all(bind=engine)
+        
+        # Load initial data if table is empty
+        db = next(get_db())
+        result = db.execute(text("SELECT COUNT(*) FROM products")).scalar()
+        if result == 0:
+            load_products(db, "datasets/product.json")
+            print("Successfully loaded product data")
+        db.close()
+        print("Database initialization completed")
+    except Exception as e:
+        print(f"Error during startup: {e}")
+        raise e
 
 @app.get("/healthz")
 async def healthz(db: Session = Depends(get_db)):
@@ -47,4 +68,16 @@ async def healthz(db: Session = Depends(get_db)):
     return health_status
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=SERVER_PORT)
+    try:
+        uvicorn.run(
+            "main:app",
+            host="0.0.0.0",
+            port=SERVER_PORT,
+            reload=True,
+            workers=1,
+            log_level="info"
+        )
+    except KeyboardInterrupt:
+        print("Shutting down gracefully...")
+    except Exception as e:
+        print(f"Error running server: {e}")
