@@ -3,12 +3,12 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import create_sql_query_chain
 from langchain_community.utilities import SQLDatabase
 from sqlalchemy import create_engine, text
-from core.config import POSTGRES_URL, OPENAI_API_KEY
+from core.config import POSTGRES_URL, OPENAI_API_KEY, OPENAI_MODEL
 
 class SQLQueryProcessor:
     def __init__(self):
         self.db = SQLDatabase.from_uri(POSTGRES_URL)
-        self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o-mini", api_key=OPENAI_API_KEY)
+        self.llm = ChatOpenAI(temperature=0.7, model_name=OPENAI_MODEL, api_key=OPENAI_API_KEY)
         self.chain = create_sql_query_chain(llm=self.llm, db=self.db)
         
         # Define the table schema for context
