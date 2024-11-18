@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+premsql/
 
 # Distribution / packaging
 .Python
