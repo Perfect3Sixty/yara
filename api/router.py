@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from api.endpoints import search
+from api.endpoints import search, query
 
-api_router = APIRouter()
+api_router = APIRouter(prefix="/api")
 
 # Include routes from endpoints
 api_router.include_router(search.router, tags=["search"])
+api_router.include_router(query.router, tags=["query"])
