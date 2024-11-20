@@ -1,4 +1,4 @@
-
+# models/product.py
 from sqlalchemy import Column, Integer, String, Float, Text
 from services.postgres import Base
 
