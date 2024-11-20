@@ -5,12 +5,11 @@ from langchain.output_parsers import PydanticOutputParser
 from core.config import OPENAI_API_KEY, OPENAI_MODEL
 from schemas.product import ProductInfo
 import logging
-from typing import Optional, List, Dict
+from typing import Optional
 from bs4 import BeautifulSoup
-import json
 import asyncio
 import aiohttp
-from urllib.parse import quote, urljoin, urlparse, parse_qs, urlencode
+from urllib.parse import quote, urljoin, urlparse, parse_qs
 import re
 
 logging.basicConfig(
