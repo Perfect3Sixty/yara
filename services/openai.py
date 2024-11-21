@@ -3,7 +3,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.callbacks import AsyncIteratorCallbackHandler
 from typing import AsyncIterator, Dict, Any, List
 import asyncio
-import json
+import json, uuid
 from datetime import datetime
 
 class OpenAiService:
@@ -21,8 +21,21 @@ class OpenAiService:
 
     def format_sse(self, event: str, data: Any) -> str:
         """Format the data as SSE message with event type"""
-        json_data = json.dumps(data)
-        return f"event: {event}\ndata: {json_data}\n\n"
+
+        json_data = {
+            "message_id": f'message-{uuid.uuid4()}',
+            "type": "message",
+            "content": data,
+        }
+        
+        if event == "start" or event == "done" or event == "error":
+            edge_json = {
+                "event": event.upper(),
+                "content": data,
+            }
+            return f"data: {edge_json}\n\n"
+        
+        return f"data: {json_data}\n\n"
 
     async def accumulate_chunks(self, current_chunk: List[str], buffer_size: int = 150) -> str:
         """Accumulate chunks until they form a meaningful segment"""
@@ -76,7 +89,9 @@ class OpenAiService:
 
             # Send complete response
             complete_response = ''.join(full_response)
-            yield self.format_sse("done", complete_response)
+            yield self.format_sse("final", complete_response)
+            yield self.format_sse("done", "Response completed")
+            
 
         except Exception as e:
             yield self.format_sse("error", str(e))
