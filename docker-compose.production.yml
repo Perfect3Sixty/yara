@@ -23,7 +23,7 @@ services:
   yara:
     image: xwukong/yara-agent:v0.3.0
     env_file:
-      - docker.env
+      - .env
     ports:
       - 7622:7600
     depends_on:
