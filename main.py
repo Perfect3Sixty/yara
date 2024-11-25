@@ -14,14 +14,15 @@ from utils.data_loader import load_products
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",     # React development server
-    "http://localhost:5173",     # Vite development server
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-    # Add your production domain when deploying
-    # "https://yourdomain.com",
-]
+# origins = [
+#     "http://localhost:3000",     # React development server
+#     "http://localhost:5173",     # Vite development server
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1:5173",
+#     # Add your production domain when deploying
+#     "https://perfect3sixty.com",
+# ]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
