@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from schemas.chat import UserProfile, ChatMessage, ChatMessageRequest
 from processors.text_processor import TextProcessor
-
+from typing import Union, Dict, Any
 router = APIRouter()
 processor = TextProcessor()
 
@@ -33,6 +33,8 @@ async def stream_chat(
             'X-Accel-Buffering': 'no'
         }
     )
+    
+
 
 @router.get("/chat/{session_id}/history")
 async def get_chat_history(session_id: str):

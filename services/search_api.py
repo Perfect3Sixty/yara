@@ -50,6 +50,10 @@ class SourceExtractorService:
             print(f"Error extracting content from {url}: {str(e)}")
             return None
 
+    async def get_sources(self) -> Optional[str]:
+      """Get sources from Brave search"""
+      pass
+
     async def get_source_context(self, query: str) -> List[Dict]:
         """Get context from multiple sources for a query"""
         try:

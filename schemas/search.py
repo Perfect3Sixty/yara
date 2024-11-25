@@ -1,50 +1,45 @@
+from typing import List, Optional, Dict
 from pydantic import BaseModel
-from typing import Dict, Optional, List
 
 class MetaUrl(BaseModel):
-    scheme: str
-    netloc: str
-    hostname: str
-    favicon: str
-    path: str
+    scheme: Optional[str] = None
+    netloc: Optional[str] = None
+    hostname: Optional[str] = None
+    favicon: Optional[str] = None
+    path: Optional[str] = None
 
 class Thumbnail(BaseModel):
-    src: str
-    original: str
-    logo: Optional[bool] = False  # Made logo optional with default False
+    src: Optional[str] = None
+    original: Optional[str] = None
+    logo: Optional[bool] = False
 
 class Profile(BaseModel):
-    name: str
-    url: str
-    long_name: str
-    img: str
-
-class VideoResult(BaseModel):
-    type: str
-    url: str
-    title: str
-    description: str
-    age: Optional[str] = None
-    page_age: Optional[str] = None
-    video: Dict = {}
-    meta_url: MetaUrl
-    thumbnail: Thumbnail
+    name: Optional[str] = None
+    url: Optional[str] = None
+    long_name: Optional[str] = None
+    img: Optional[str] = None
 
 class WebResult(BaseModel):
     title: str
     url: str
-    is_source_local: bool
-    is_source_both: bool
-    description: str
-    profile: Profile
-    language: str
-    family_friendly: bool
-    type: str
-    subtype: str
-    is_live: bool
-    meta_url: MetaUrl
+    description: Optional[str] = None
+    profile: Optional[Profile] = None
+    type: Optional[str] = None
+    subtype: Optional[str] = None
+    language: Optional[str] = None
     thumbnail: Optional[Thumbnail] = None
+    meta_url: Optional[MetaUrl] = None
+
+class VideoResult(BaseModel):
+    type: str = "video_result"
+    url: str
+    title: str
+    description: Optional[str] = None
+    age: Optional[str] = None
+    page_age: Optional[str] = None
+    thumbnail: Optional[Thumbnail] = None
+    meta_url: Optional[MetaUrl] = None
 
 class SearchResponse(BaseModel):
-    videos: List[VideoResult]
-    web: List[WebResult]
+    web: List[WebResult] = []
+    videos: List[VideoResult] = []
