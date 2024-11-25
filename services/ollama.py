@@ -1,16 +1,20 @@
-# services/openai.py
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+# services/ollama.py
+from langchain_community.llms import Ollama
+from langchain_community.embeddings import OllamaEmbeddings
 from langchain.callbacks import AsyncIteratorCallbackHandler
 from typing import AsyncIterator, Dict, Any, List
 import asyncio
-import json, uuid
+import uuid
 from datetime import datetime
 
-class OpenAiService:
-    def __init__(self, api_key: str, model_name: str):
-        self.api_key = api_key
+class OllamaService:
+    def __init__(self, base_url: str, model_name: str):
+        self.base_url = base_url
         self.model_name = model_name
-        self.embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+        self.embeddings = OllamaEmbeddings(
+            base_url=base_url,
+            model=model_name
+        )
 
     async def get_embeddings(self, text: str) -> List[float]:
         """Get embeddings for text"""
@@ -21,7 +25,6 @@ class OpenAiService:
 
     def format_sse(self, event: str, data: Any) -> str:
         """Format the data as SSE message with event type"""
-
         json_data = {
             "message_id": f'message-{uuid.uuid4()}',
             "type": "message",
@@ -33,7 +36,7 @@ class OpenAiService:
                 "event": event.upper(),
                 "content": data,
             }
-            return f"data: {edge_json}\n\n"
+            return f"data: {json_data}\n\n"
         
         return f"data: {json_data}\n\n"
 
@@ -56,13 +59,12 @@ class OpenAiService:
         """Stream chat completions with proper SSE format"""
         try:
             callback_handler = AsyncIteratorCallbackHandler()
-            llm = ChatOpenAI(
+            llm = Ollama(
+                base_url=self.base_url,
+                model=self.model_name,
                 streaming=True,
                 callbacks=[callback_handler],
-                temperature=temperature,
-                model=self.model_name,
-                openai_api_key=self.api_key,
-                max_tokens=1000
+                temperature=temperature
             )
 
             current_chunk = []
@@ -71,9 +73,12 @@ class OpenAiService:
             # Send start message
             yield self.format_sse("start", "Starting response...")
             
-            async for chunk in llm.astream(messages):
-                if hasattr(chunk, 'content'):
-                    token = chunk.content
+            # Convert messages to prompt format that Ollama expects
+            prompt = self._convert_messages_to_prompt(messages)
+            
+            async for chunk in llm.astream(prompt):
+                if chunk:
+                    token = chunk
                     current_chunk.append(token)
                     full_response.append(token)
                     
@@ -92,13 +97,28 @@ class OpenAiService:
             complete_response = ''.join(full_response)
             yield self.format_sse("final", complete_response)
             yield self.format_sse("done", "Response completed")
-            
 
         except Exception as e:
             yield self.format_sse("error", str(e))
         finally:
             if 'callback_handler' in locals():
                 callback_handler.done.set()
+
+    def _convert_messages_to_prompt(self, messages: List[Dict[str, Any]]) -> str:
+        """Convert chat messages to Ollama prompt format"""
+        prompt_parts = []
+        for message in messages:
+            role = message["role"]
+            content = message["content"]
+            
+            if role == "system":
+                prompt_parts.append(f"System: {content}")
+            elif role == "user":
+                prompt_parts.append(f"Human: {content}")
+            elif role == "assistant":
+                prompt_parts.append(f"Assistant: {content}")
+            
+        return "\n".join(prompt_parts)
 
     async def chat_completion(
         self, 
@@ -107,13 +127,17 @@ class OpenAiService:
     ) -> str:
         """Get single chat completion response"""
         try:
-            llm = ChatOpenAI(
-                streaming=False,
-                temperature=temperature,
+            llm = Ollama(
+                base_url=self.base_url,
                 model=self.model_name,
-                openai_api_key=self.api_key
+                streaming=False,
+                temperature=temperature
             )
-            response = await llm.ainvoke(messages)
-            return response.content
+            
+            # Convert messages to prompt format
+            prompt = self._convert_messages_to_prompt(messages)
+            
+            response = await llm.ainvoke(prompt)
+            return response
         except Exception as e:
             raise Exception(f"Error in chat completion: {str(e)}")

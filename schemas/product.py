@@ -15,9 +15,6 @@ class ProductCreate(ProductBase):
 class Product(ProductBase):
     id: int
     price_value: float
-
-    class Config:
-        orm_mode = True
         
 class ProductInfo(BaseModel):
     """Data structure for product information"""

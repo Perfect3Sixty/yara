@@ -1,5 +1,6 @@
 # main.py
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 import uvicorn
@@ -12,6 +13,25 @@ from models.product import Base
 from utils.data_loader import load_products
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",     # React development server
+    "http://localhost:5173",     # Vite development server
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    # Add your production domain when deploying
+    # "https://yourdomain.com",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],         # Allows all methods
+    allow_headers=["*"],         # Allows all headers
+    expose_headers=["*"],        # Expose all headers
+    max_age=600,                 # Cache preflight requests for 10 minutes
+)
 
 # Include the API router
 app.include_router(api_router)
